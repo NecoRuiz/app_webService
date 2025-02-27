@@ -22,7 +22,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -39,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.app_webservice.R
 import com.example.app_webservice.ui.theme.fredokaFmily
+import kotlinx.coroutines.delay
+import kotlin.random.Random
 
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -159,9 +165,9 @@ fun ButtonLogin(loginEnable: Boolean, onLoginSelected: () -> Unit) {
         .height(48.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.teal_700),  // Color cuando el botón está habilitado
-            disabledContainerColor = colorResource(id = R.color.dark_gray),  // Color cuando está deshabilitado
-            contentColor = colorResource(id = R.color.light_steel_blue), // Color del texto cuando está habilitado
-            disabledContentColor = colorResource(id = R.color.dark_gray) // Color del texto cuando está deshabilitado
+            disabledContainerColor = colorResource(id = R.color.gainsboro),  // Color cuando está deshabilitado
+            contentColor = colorResource(id = R.color.black), // Color del texto cuando está habilitado
+            disabledContentColor = colorResource(id = R.color.white) // Color del texto cuando está deshabilitado
         ),
             enabled = loginEnable
 
@@ -230,12 +236,20 @@ fun PassWordField(password : String, onTextFieldChanged : (String) -> Unit){
 
 }
 
+// Extensión para generar números aleatorios en rangos Float
+fun ClosedFloatingPointRange<Float>.random(): Float =
+    Random.nextFloat() * (endInclusive - start) + start
+
 @Composable
 fun BouncingBubbles() {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
 
-    // Colores pastel predefinidos
+    // Convertimos el tamaño de la pantalla a píxeles
+    val screenWidthPx = with(density) { configuration.screenWidthDp.dp.toPx() }
+    val screenHeightPx = with(density) { configuration.screenHeightDp.dp.toPx() }
+
+    // Lista de colores para las burbujas
     val bubbleColors = listOf(
         Color(0xFFa8d5ba), // Verde pastel
         Color(0xFFb2c9f7), // Azul pastel
@@ -243,63 +257,85 @@ fun BouncingBubbles() {
         Color(0xFFb0e0a8)  // Verde menta claro
     )
 
+    // Creamos una lista de burbujas
     val bubbles = remember {
-        List(10) { // Número de burbujas
+        List(10) {
             Bubble(
-                radius = (20..50).random(),
+                radius = (20..50).random().toFloat(),
                 color = bubbleColors.random(),
-                position = Offset(
-                    x = (0..screenWidth.value.toInt()).random().toFloat(),
-                    y = (0..screenHeight.value.toInt()).random().toFloat()
+                position = mutableStateOf(
+                    Offset(
+                        x = (0f..screenWidthPx).random(),
+                        y = (0f..screenHeightPx * 0.5f).random() // La mitad superior de la pantalla
+                    )
                 ),
                 velocity = Offset(
-                    x = ((1..5).random() * if (Math.random() > 0.5) 1 else -1).toFloat(),
-                    y = ((1..5).random() * if (Math.random() > 0.5) 1 else -1).toFloat()
+                    x = ((1..5).random() * if (Random.nextBoolean()) 1 else -1).toFloat(),
+                    y = ((1..5).random() * if (Random.nextBoolean()) 1 else -1).toFloat()
                 )
             )
         }
     }
 
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        bubbles.forEach { bubble ->
-            drawCircle(
-                color = bubble.color,
-                radius = bubble.radius.toFloat(),
-                center = bubble.position
-            )
+    // Dibujamos las burbujas
+    Box(modifier = Modifier.fillMaxSize()) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            bubbles.forEach { bubble ->
+                drawCircle(
+                    color = bubble.color,
+                    radius = bubble.radius,
+                    center = bubble.position.value
+                )
+            }
         }
+    }
 
-        // Actualizamos la posición de las burbujas y las rebote
-        bubbles.forEach { bubble ->
-            val newX = bubble.position.x + bubble.velocity.x
-            val newY = bubble.position.y + bubble.velocity.y
-
-            // Rebote en el eje X
-            if (newX - bubble.radius < 0 || newX + bubble.radius > screenWidth.value) {
-                bubble.velocity = bubble.velocity.copy(x = -bubble.velocity.x)
+    // Animamos cada burbuja de forma individual
+    bubbles.forEach { bubble ->
+        LaunchedEffect(bubble) {
+            while (true) {
+                moveBubble(bubble, screenWidthPx, screenHeightPx)
+                delay(16L) // ~60 FPS
             }
-
-            // Rebote en el eje Y
-            if (newY - bubble.radius < 0 || newY + bubble.radius > screenHeight.value) {
-                bubble.velocity = bubble.velocity.copy(y = -bubble.velocity.y)
-            }
-
-            // Actualiza la posición de la burbuja
-            bubble.position = Offset(
-                x = newX.coerceIn(bubble.radius.toFloat(), screenWidth.value - bubble.radius),
-                y = newY.coerceIn(bubble.radius.toFloat(), screenHeight.value - bubble.radius)
-            )
         }
     }
 }
 
-// Clase para representar una burbuja
+// Función auxiliar que mueve la burbuja y maneja el rebote
+suspend fun moveBubble(bubble: Bubble, screenWidthPx: Float, screenHeightPx: Float) {
+    val currentPos = bubble.position.value
+    var newVelocity = bubble.velocity
+
+    // Calculamos la nueva posición
+    val newX = currentPos.x + newVelocity.x
+    val newY = currentPos.y + newVelocity.y
+
+    // Verificamos colisiones en el eje X
+    if (newX - bubble.radius < 0 || newX + bubble.radius > screenWidthPx) {
+        newVelocity = newVelocity.copy(x = -newVelocity.x)
+    }
+    // Verificamos colisiones en el eje Y (limitado a la mitad superior)
+    if (newY - bubble.radius < 0 || newY + bubble.radius > screenHeightPx * 0.5f) {
+        newVelocity = newVelocity.copy(y = -newVelocity.y)
+    }
+
+    // Actualizamos la velocidad y posición de la burbuja
+    bubble.velocity = newVelocity
+    bubble.position.value = Offset(
+        x = (currentPos.x + newVelocity.x).coerceIn(bubble.radius, screenWidthPx - bubble.radius),
+        y = (currentPos.y + newVelocity.y).coerceIn(bubble.radius, screenHeightPx * 0.5f - bubble.radius)
+    )
+}
+
+// Clase que representa una burbuja
 data class Bubble(
-    var radius: Int,
-    var color: Color,
-    var position: Offset,
+    val radius: Float,
+    val color: Color,
+    val position: MutableState<Offset>,
     var velocity: Offset
 )
+
+
 
 
 
