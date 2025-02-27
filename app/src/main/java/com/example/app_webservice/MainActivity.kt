@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.app_webservice.ui.home.ui.HomeScreen
 import com.example.app_webservice.ui.login.ui.LoginScreen
+import com.example.app_webservice.ui.login.ui.loginViewModel
 import com.example.app_webservice.ui.theme.App_WebServiceTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,7 +22,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
 
-               LoginScreen()
+               LoginScreen(viewModel = loginViewModel())
 
             }
         }

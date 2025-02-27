@@ -1,4 +1,4 @@
-package com.example.app_webservice.api
+package com.example.app_webservice.data.api
 
 import com.google.gson.annotations.SerializedName
 //respuesta que me da odoo-->error o resultado

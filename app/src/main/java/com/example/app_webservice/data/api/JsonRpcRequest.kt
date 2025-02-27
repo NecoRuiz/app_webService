@@ -1,6 +1,5 @@
-package com.example.app_webservice.api
+package com.example.app_webservice.data.api
 
-import com.google.gson.JsonElement
 import kotlin.random.Random
 //protocolos que odoo necesita para hacer la peticion
 data class JsonRpcRequest(

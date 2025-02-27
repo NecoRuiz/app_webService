@@ -1,6 +1,5 @@
-package com.example.app_webservice.service
+package com.example.app_webservice.data.api
 
-import com.example.app_webservice.api.JsonRpcRequest
 import com.google.gson.JsonElement
 import retrofit2.http.Body
 import retrofit2.http.POST
