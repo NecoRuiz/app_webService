@@ -1,11 +1,15 @@
 package com.example.app_webservice.ui.login.ui
 
+import android.app.Dialog
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,8 +19,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -27,6 +33,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +48,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.app_webservice.R
 import com.example.app_webservice.ui.theme.fredokaFmily
 import kotlinx.coroutines.delay
@@ -61,98 +69,180 @@ fun LoginScreenPreview() {
 @Composable
 fun LoginScreen(viewModel: loginViewModel) {
     //gracias al email, engancho las vistas con el liveData del viewModel
-    val email : String by viewModel.email.observeAsState(initial = "")
-    val password : String by viewModel.password.observeAsState(initial = "")
-    val loginEnable : Boolean by viewModel.loginEnable.observeAsState(initial = false)
+    val email: String by viewModel.email.observeAsState(initial = "")
+    val password: String by viewModel.password.observeAsState(initial = "")
+    val loginEnable: Boolean by viewModel.loginEnable.observeAsState(initial = false)
+    //variable para controlar el estado del formlario, por defecto--->false, cuando se ckicle--->true
+    var showRegisterDialog by remember { mutableStateOf(false) }
+    var registerName by remember { mutableStateOf("") }
+    var registerEmail by remember { mutableStateOf("") }
+    var registerPassword by remember { mutableStateOf("") }
 
 
+    Box(modifier = Modifier.fillMaxSize()) {
 
-        Box(modifier = Modifier.fillMaxSize()) {
+        // Fondo de arriba
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.5f)
+                .fillMaxSize()
+                .clip(RoundedCornerShape(16.dp))
+                .background(colorResource(id = R.color.teal_700)),
+            contentAlignment = Alignment.Center
+        ) {
 
-            // Fondo principal (toda la pantalla)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f)
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(colorResource( id = R.color.teal_700)),
-                contentAlignment = Alignment.Center
-            ){
+            BouncingBubbles()
 
-                BouncingBubbles()
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally){
+                Text(
+                    text = "¡Hola!",
+                    fontFamily = fredokaFmily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 50.sp,
+                    color = colorResource(id = R.color.light_steel_blue),
+                    modifier = Modifier.padding(top = 100.dp, end = 250.dp, start = 10.dp)
+                )
+                Text(
 
-                    Text(
-                        text = "¡Hola!",
-                        fontFamily = fredokaFmily,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 50.sp,
-                        color = colorResource(id = R.color.light_steel_blue),
-                        modifier = Modifier.padding(top = 100.dp, end = 250.dp, start = 10.dp)
-                    )
-                    Text(
+                    text = "Bienvenido a TotalShine",
+                    fontFamily = fredokaFmily,
+                    fontWeight = FontWeight.Thin,
+                    fontSize = 25.sp,
+                    color = colorResource(id = R.color.light_steel_blue),
+                    modifier = Modifier.padding(top = 70.dp, bottom = 50.dp, end = 20.dp)
 
-                        text = "Bienvenido a TotalShine",
-                        fontFamily = fredokaFmily,
-                        fontWeight = FontWeight.Thin,
-                        fontSize = 25.sp,
-                        color = colorResource(id = R.color.light_steel_blue),
-                        modifier = Modifier.padding(top = 70.dp, bottom = 50.dp, end = 20.dp)
-
-                    )
-
-                }
+                )
 
             }
-
-
-
-            // Box inferior superpuesto (mitad de pantalla)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.6f) // Ocupa la parte inferior
-                    .align(Alignment.BottomCenter) // Se coloca en la parte inferior
-                    .background(
-                        color = colorResource(id = R.color.light_steel_blue),
-                        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp) // Bordes superiores redondeados
-                    ),
-                contentAlignment = Alignment.TopCenter // Asegura que el contenido empiece desde arriba
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp), // Espaciado entre elementos
-                    modifier = Modifier.offset(y = (10.dp)) // Mueve
-                ) {
-                    Text(
-                        text = "Login",
-                        fontFamily = fredokaFmily,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 35.sp,
-                        color = colorResource(id = R.color.teal_700),
-                        modifier = Modifier.padding(bottom = 8.dp, end = 190.dp) // Espacio entre el texto y los campos
-                    )
-                    //cada tecla que el usser pulse, onLoginChange llama al viewModel para comprobar si es valido
-                    //se pasa el ultimo estado de cada campo
-                    EmailField(email, {viewModel.onLoginChanged(it, password)})
-                    PassWordField(password){viewModel.onLoginChanged(email, it)}
-                    //cada vez que pulsemos el boton, llama al metodo del viewModel
-                    ButtonLogin(loginEnable) {}
-                }
-            }
-
-
-
-
-
-
 
         }
 
+
+        // Box inferior superpuesto (mitad de pantalla)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.6f) // Ocupa la parte inferior
+                .align(Alignment.BottomCenter) // Se coloca en la parte inferior
+                .background(
+                    color = colorResource(id = R.color.light_steel_blue),
+                    shape = RoundedCornerShape(
+                        topStart = 32.dp,
+                        topEnd = 32.dp
+                    ) // Bordes superiores redondeados
+                ),
+            contentAlignment = Alignment.TopCenter // Asegura que el contenido empiece desde arriba
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp), // Espaciado entre elementos
+                modifier = Modifier.offset(y = (10.dp))
+            ) {
+                Text(
+                    text = "Login",
+                    fontFamily = fredokaFmily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 35.sp,
+                    color = colorResource(id = R.color.teal_700),
+                    modifier = Modifier.padding(
+                        bottom = 8.dp,
+                        end = 190.dp
+                    ) // Espacio entre el texto y los campos
+                )
+                //cada tecla que el usser pulse, onLoginChange llama al viewModel para comprobar si es valido
+                //se pasa el ultimo estado de cada campo
+                EmailField(email, { viewModel.onLoginChanged(it, password) })
+                PassWordField(password) { viewModel.onLoginChanged(email, it) }
+                //cada vez que pulsemos el boton, llama al metodo del viewModel
+                ButtonLogin(loginEnable) {}
+
+                Text(
+
+                    text = "¿No tienes cuenta?, REGÍSTRATE",
+                    color = colorResource(R.color.blue),
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .clickable { showRegisterDialog = true }
+                    )
+            }
+        }
+    }
+    //se abre el formulario
+    if (showRegisterDialog) {
+        Dialog(onDismissRequest = {showRegisterDialog = false }) {
+
+            Surface(
+
+                shape = RoundedCornerShape(20.dp),
+                color = Color.White,
+                modifier = Modifier.padding(16.dp)
+
+            ){
+
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) { Text(
+
+                    text = "Registro de ususario",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+
+                )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+
+                        value = registerName,
+                        onValueChange = { registerName = it},
+                        label = { Text("Nombre completo") }
+
+                    )
+                    OutlinedTextField(
+
+                        value = registerEmail,
+                        onValueChange = { registerEmail = it},
+                        label = { Text("Correo electrónico") }
+
+                    )
+                    OutlinedTextField(
+
+                        value = registerPassword,
+                        onValueChange = { registerPassword = it},
+                        label = { Text("Contraseña") },
+                        visualTransformation = PasswordVisualTransformation()
+
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly){
+
+                        Button(onClick = {
+
+                            viewModel.registerUser(registerName, registerEmail, registerPassword)
+                            showRegisterDialog = false //se cierra despues del registro
+
+                        }) {
+                            Text("Crear Cuenta")
+                        }
+                        Button(onClick = { showRegisterDialog = false }) {
+                            Text("Cancelar")
+                        }
+                    }
+                }
+
+            }
+
+        }
     }
 
+}
 
 
 //boton login
@@ -161,15 +251,15 @@ fun ButtonLogin(loginEnable: Boolean, onLoginSelected: () -> Unit) {
     Button(
         onClick = { onLoginSelected() },
         modifier = Modifier
-        .width(200.dp)
-        .height(48.dp),
+            .width(200.dp)
+            .height(48.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.teal_700),  // Color cuando el botón está habilitado
             disabledContainerColor = colorResource(id = R.color.gainsboro),  // Color cuando está deshabilitado
             contentColor = colorResource(id = R.color.black), // Color del texto cuando está habilitado
             disabledContentColor = colorResource(id = R.color.white) // Color del texto cuando está deshabilitado
         ),
-            enabled = loginEnable
+        enabled = loginEnable
 
 
     ) {
@@ -187,7 +277,7 @@ fun ButtonLogin(loginEnable: Boolean, onLoginSelected: () -> Unit) {
 
 //email
 @Composable
-fun EmailField(email : String, onTextFieldChanged : (String) -> Unit) {
+fun EmailField(email: String, onTextFieldChanged: (String) -> Unit) {
 
     TextField(
         //cada vez que se pulse una tecla-->
@@ -196,7 +286,7 @@ fun EmailField(email : String, onTextFieldChanged : (String) -> Unit) {
         // se lo pasa a la var email-->
         // email es el valor del textfield-->
         // textfield se actualiza
-        value = email, onValueChange = {onTextFieldChanged(it)},
+        value = email, onValueChange = { onTextFieldChanged(it) },
         modifier = Modifier
             .fillMaxWidth(0.8f) // Ajusta el ancho del campo de texto
             .padding(16.dp),
@@ -204,28 +294,39 @@ fun EmailField(email : String, onTextFieldChanged : (String) -> Unit) {
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         singleLine = true,//true=no se amplia el campo a medida que se escribe
         maxLines = 1,
-        shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp, bottomStart = 15.dp, bottomEnd = 15.dp),
+        shape = RoundedCornerShape(
+            topStart = 15.dp,
+            topEnd = 15.dp,
+            bottomStart = 15.dp,
+            bottomEnd = 15.dp
+        ),
         colors = TextFieldDefaults.colors(
             focusedTextColor = colorResource(id = R.color.black),
             unfocusedTextColor = colorResource(id = R.color.black)
         )
     )
 }
+
 //password
 @Composable
-fun PassWordField(password : String, onTextFieldChanged : (String) -> Unit){
+fun PassWordField(password: String, onTextFieldChanged: (String) -> Unit) {
 
     TextField(
-
-        value = password, onValueChange = {onTextFieldChanged(it)},
+        //msimo proceso que en el email
+        value = password, onValueChange = { onTextFieldChanged(it) },
         modifier = Modifier
-            .fillMaxWidth(0.8f) // Ajusta el ancho del campo de texto
+            .fillMaxWidth(0.8f)
             .padding(16.dp),
         placeholder = { Text("PassWord") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         singleLine = true,
         maxLines = 1,
-        shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp, bottomStart = 15.dp, bottomEnd = 15.dp),
+        shape = RoundedCornerShape(
+            topStart = 15.dp,
+            topEnd = 15.dp,
+            bottomStart = 15.dp,
+            bottomEnd = 15.dp
+        ),
         colors = TextFieldDefaults.colors(
             focusedTextColor = colorResource(id = R.color.black),
             unfocusedTextColor = colorResource(id = R.color.black)
@@ -323,7 +424,10 @@ suspend fun moveBubble(bubble: Bubble, screenWidthPx: Float, screenHeightPx: Flo
     bubble.velocity = newVelocity
     bubble.position.value = Offset(
         x = (currentPos.x + newVelocity.x).coerceIn(bubble.radius, screenWidthPx - bubble.radius),
-        y = (currentPos.y + newVelocity.y).coerceIn(bubble.radius, screenHeightPx * 0.5f - bubble.radius)
+        y = (currentPos.y + newVelocity.y).coerceIn(
+            bubble.radius,
+            screenHeightPx * 0.5f - bubble.radius
+        )
     )
 }
 
