@@ -9,8 +9,8 @@ import retrofit2.http.POST
 //@PUT
 //@DELETE
 interface OdooApi {
-//ejemplo
-    @POST("jsonrpc")
+
+    @POST("/jsonrpc")//endpoint comun para comunicarme con odoo Json
                         //envia un obj peticion de tipo JsonRpcRequest y devuelve un JsonElement
     suspend fun jsonrpc(@Body request: JsonRpcRequest): JsonElement
 
