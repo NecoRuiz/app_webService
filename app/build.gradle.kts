@@ -57,6 +57,7 @@ dependencies {
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.5")
+    implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation(libs.androidx.foundation.layout.android)
     implementation(libs.androidx.animation.core.android)
     implementation(libs.androidx.animation.core.android)

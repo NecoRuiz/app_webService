@@ -1,7 +1,6 @@
-package com.example.app_webservice.ui.login.ui
+package com.example.app_webservice.ui.login
 
 
-import android.util.Log
 import android.util.Patterns
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData

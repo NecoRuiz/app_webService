@@ -6,8 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.app_webservice.data.api.ApiClient
 import com.example.app_webservice.data.repository.UserRepository
-import com.example.app_webservice.ui.login.ui.LoginScreen
-import com.example.app_webservice.ui.login.ui.LoginViewModel
+import com.example.app_webservice.ui.core.AppNavigation
+import com.example.app_webservice.ui.login.LoginViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
             val repository = UserRepository(ApiClient.odooApi)
             val loginViewModel = LoginViewModel(repository)
 
-            LoginScreen(viewModel = loginViewModel)
+            AppNavigation(viewModel = loginViewModel)
 
             }
         }
