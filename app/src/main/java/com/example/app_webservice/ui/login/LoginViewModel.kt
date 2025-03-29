@@ -34,8 +34,6 @@ class LoginViewModel(private val repository: UserRepository) : ViewModel(){
     private fun isValidPassword(password: String): Boolean = password.length > 6
 
 
-    private val _registerState = MutableLiveData<Boolean>()
-    val registerState: LiveData<Boolean> = _registerState
     var toastMessage = mutableStateOf<String?>(null)
 
     fun registerUser(registerName: String, registerEmail: String, registerPassword: String){
@@ -54,6 +52,26 @@ class LoginViewModel(private val repository: UserRepository) : ViewModel(){
                 }
             }catch (e: Exception){
                 toastMessage.value = "Error en el registro"
+            }
+        }
+    }
+
+    private val _loginSuccess = MutableLiveData<Boolean>()
+    val loginSuccess: LiveData<Boolean> = _loginSuccess
+    fun loginUser(email: String, password: String){
+        viewModelScope.launch {
+            try {
+                val uid = repository.authenticateUser(email, password)
+                if(uid != null && uid > 0){
+                    _loginSuccess.value = true
+                    toastMessage.value = "Login correcto"
+                }else{
+                    _loginSuccess.value = false
+                    toastMessage.value = "Login incorrecto "
+                }
+            }catch (e: Exception){
+                _loginSuccess.value = false
+                toastMessage.value = "Login incorrecto"
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.example.app_webservice.ui.login
 
+import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -89,6 +90,11 @@ fun LoginScreen(viewModel: LoginViewModel) {
     //val context = LocalContext.current
     val toastMessage by viewModel.toastMessage
     val snackbarHostState = remember { SnackbarHostState() }
+    //variables para hacer enable o no el boton de crear user
+    val isEmailValid = remember(registerEmail) { Patterns.EMAIL_ADDRESS.matcher(registerEmail).matches() }
+    val isPasswordValid = remember(registerPassword) { registerPassword.length >= 6 }
+    val isNameValid = remember(registerName) { registerName.isNotBlank() }
+    val registerEnable = isEmailValid && isPasswordValid && isNameValid
 
     LaunchedEffect(toastMessage) {
         if (!toastMessage.isNullOrEmpty()) {
@@ -103,7 +109,6 @@ fun LoginScreen(viewModel: LoginViewModel) {
 
 
     Box(modifier = Modifier.fillMaxSize()) {
-
         // Fondo de arriba
         Box(
             modifier = Modifier
@@ -114,19 +119,13 @@ fun LoginScreen(viewModel: LoginViewModel) {
                 .background(colorResource(id = R.color.teal_700)),
             contentAlignment = Alignment.Center
         ) {
+            //mostrador de mensajes emergentes
             SnackbarHost(
                 hostState = snackbarHostState,
                 modifier = Modifier
-                    .align(Alignment.Center)
-            ){ snackbarData ->
-                Snackbar(
-                    snackbarData,
-                    modifier = Modifier.padding(16.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    containerColor = Color(0xFF4CAF50), 
-                    contentColor = Color.White
-                )
-            }
+                    .align(Alignment.TopCenter)
+                    .padding(top = 32.dp)
+            )
             //llamada a la funcion de las burbujas
             BouncingBubbles()
 
@@ -192,7 +191,9 @@ fun LoginScreen(viewModel: LoginViewModel) {
                 EmailField(email, { viewModel.onLoginChanged(it, password) })
                 PassWordField(password) { viewModel.onLoginChanged(email, it) }
                 //cada vez que pulsemos el boton, llama al metodo del viewModel
-                ButtonLogin(loginEnable) {}
+                ButtonLogin(loginEnable) {
+                    viewModel.loginUser(email, password)
+                }
 
                 Text(
 
@@ -299,9 +300,10 @@ fun LoginScreen(viewModel: LoginViewModel) {
                                 println("Botón de registro presionado")
                                 viewModel.registerUser(registerName, registerEmail, registerPassword)
                             },
+                            enabled = registerEnable,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.White,  // Fondo blanco
-                                contentColor = Color.Black  // Texto negro
+                                contentColor = Color.Black // Texto negro
                             )
                         )  {
                             Text("Crear Cuenta")

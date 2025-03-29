@@ -1,84 +1,120 @@
 package com.example.app_webservice.ui.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.runtime.Composable
+import androidx.compose.material.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.app_webservice.R
 
+@Preview
 @Composable
-fun HomeOptionsScreen(onLogoutClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        // Icono de perfil/logout arriba a la derecha
-        IconButton(
-            onClick = onLogoutClick,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "Perfil / Logout",
-                tint = Color.Black
-            )
-        }
+fun HomeScreen() {
+    val selectedOption = remember { mutableStateOf("servicio") }
 
-        // Contenido principal: botones centrados
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Text(
-                text = "¿Qué deseas hacer?",
-                fontSize = 24.sp,
-                color = Color.Black,
-                modifier = Modifier.padding(bottom = 32.dp)
-            )
+    Box(modifier = Modifier.fillMaxSize()) {
 
-            HomeOptionButton(text = "Contratar Servicio", onClick = { /* Navegar a contratar */ })
-            Spacer(modifier = Modifier.height(24.dp))
+        Column(modifier = Modifier.fillMaxSize()
+            .background(Color.White)) {
+            // Imagen superior
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .background(Color.LightGray)
+            ) {
+                // Aquí puedes poner un carrusel más adelante
+            }
 
-            HomeOptionButton(text = "Solicitar Reunión", onClick = { /* Navegar a reunión */ })
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            HomeOptionButton(text = "Ver Historial de Servicios", onClick = { /* Navegar a historial */ })
+            // Info del negocio
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Text("TotalShine", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                Text("Urb. San Lázaro, nº27, Sarón, Cantabria, España", fontSize = 12.sp)
+                Text("667326749", fontSize = 12.sp)
+                Text("adminTotalShine@gmail.com", fontSize = 12.sp)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Botones de sección
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text("Servicios",
+                    fontWeight = if (selectedOption.value == "servicio") FontWeight.Bold else FontWeight.Normal,
+                    modifier = Modifier.clickable { selectedOption.value = "servicio" })
+
+                Text("Reuniones",
+                    fontWeight = if (selectedOption.value == "reunion") FontWeight.Bold else FontWeight.Normal,
+                    modifier = Modifier.clickable { selectedOption.value = "reunion" })
+
+                Text("Historial",
+                    fontWeight = if (selectedOption.value == "historial") FontWeight.Bold else FontWeight.Normal,
+                    modifier = Modifier.clickable { selectedOption.value = "historial" })
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Sección dinámica
+            when (selectedOption.value) {
+                "servicio" -> ServicioSection()
+                "reunion" -> ReunionSection()
+                "historial" -> HistorialSection()
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Barra inferior
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { /* Navegar o lógica futura */ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_home_24),
+                        contentDescription = "Home"
+                    )
+                }
+                IconButton(onClick = { /* Usuario */ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_person_24),
+                        contentDescription = "Perfil"
+                    )
+                }
+                IconButton(onClick = { /* Notificaciones o historial */ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_notifications_24),
+                        contentDescription = "Historial"
+                    )
+                }
+            }
         }
     }
 }
 
-@Composable
-fun HomeOptionButton(text: String, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth(0.85f)
-            .height(60.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF00897B), // Color teal personalizado
-            contentColor = Color.White
-        )
-    ) {
-        Text(text = text, fontSize = 18.sp)
-    }
-}
 
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun HomeOptionsScreenPreview() {
-    HomeOptionsScreen(onLogoutClick = {})
-}
+
+
 
