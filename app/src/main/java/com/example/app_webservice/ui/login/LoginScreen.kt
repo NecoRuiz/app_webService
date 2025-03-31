@@ -480,7 +480,7 @@ fun BouncingBubbles() {
 }
 
 // Función auxiliar que mueve la burbuja y maneja el rebote
-suspend fun moveBubble(bubble: Bubble, screenWidthPx: Float, screenHeightPx: Float) {
+ fun moveBubble(bubble: Bubble, screenWidthPx: Float, screenHeightPx: Float) {
     val currentPos = bubble.position.value
     var newVelocity = bubble.velocity
 
