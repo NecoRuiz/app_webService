@@ -64,7 +64,6 @@ class LoginViewModel(private val repository: UserRepository) : ViewModel(){
                 val uid = repository.authenticateUser(email, password)
                 if(uid != null && uid > 0){
                     _loginSuccess.value = true
-                    toastMessage.value = "Login correcto"
                 }else{
                     _loginSuccess.value = false
                     toastMessage.value = "Login incorrecto "

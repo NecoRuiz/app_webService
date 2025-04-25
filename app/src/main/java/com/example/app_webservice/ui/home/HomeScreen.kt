@@ -6,6 +6,8 @@ package com.example.app_webservice.ui.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -21,24 +23,51 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.app_webservice.R
+import com.google.accompanist.pager.HorizontalPagerIndicator
+
 
 @Preview
 @Composable
 fun HomeScreen() {
     val selectedOption = remember { mutableStateOf("servicio") }
+    val pagerState = rememberPagerState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // Imagen superior más alta
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(250.dp)
-                .background(Color.LightGray)
-        ) {}
+        ) {
+            HorizontalPager(
+                count = 3,
+                state = pagerState,
+                modifier = Modifier.fillMaxWidth()
+            ) { page ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            when (page) {
+                                0 -> Color(0xFFB2DFDB)
+                                1 -> Color(0xFFFFCCBC)
+                                2 -> Color(0xFFBBDEFB)
+                                else -> Color.LightGray
+                            }
+                        )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            HorizontalPagerIndicator(
+                pagerState = pagerState,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+        }
 
         // Información de la empresa
         Column(
