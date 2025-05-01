@@ -8,6 +8,7 @@ import com.example.app_webservice.data.api.ApiClient
 import com.example.app_webservice.data.repository.UserRepository
 import com.example.app_webservice.ui.core.AppNavigation
 import com.example.app_webservice.ui.login.LoginViewModel
+import com.example.app_webservice.ui.reserva.ReservaViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +20,8 @@ class MainActivity : ComponentActivity() {
             val repository = UserRepository(ApiClient.odooApi)
             val loginViewModel = LoginViewModel(repository)
 
-            AppNavigation(viewModel = loginViewModel)
+
+            AppNavigation(loginViewModel = loginViewModel)
 
             }
         }

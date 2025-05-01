@@ -11,7 +11,6 @@ import com.google.accompanist.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,13 +23,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.app_webservice.R
 import com.google.accompanist.pager.HorizontalPagerIndicator
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.app_webservice.ui.reserva.ReservaViewModel
 
 
-@Preview
+
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavHostController, reservaViewModel: ReservaViewModel) {
     val selectedOption = remember { mutableStateOf("servicio") }
     val pagerState = rememberPagerState()
+    val imageList = listOf(
+        R.drawable.carusselcleaningservice,
+        R.drawable.jaboncarussel,
+        R.drawable.carusselindoor,
+        R.drawable.robot
+    )
+
 
     Column(
         modifier = Modifier
@@ -43,21 +55,15 @@ fun HomeScreen() {
                 .height(250.dp)
         ) {
             HorizontalPager(
-                count = 3,
+                count = imageList.size,
                 state = pagerState,
                 modifier = Modifier.fillMaxWidth()
             ) { page ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            when (page) {
-                                0 -> Color(0xFFB2DFDB)
-                                1 -> Color(0xFFFFCCBC)
-                                2 -> Color(0xFFBBDEFB)
-                                else -> Color.LightGray
-                            }
-                        )
+                Image(
+                    painter = painterResource(id = imageList[page]),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 
@@ -125,10 +131,14 @@ fun HomeScreen() {
             verticalArrangement = Arrangement.Top
         ) {
             when (selectedOption.value) {
-                "servicio" -> ServicioSection()
+                "servicio" -> ServicioSection(
+                    viewModel = reservaViewModel,
+                    navController = navController
+                )
                 "reunion" -> ReunionSection()
                 "historial" -> HistorialSection()
             }
+
         }
 
         // Barra inferior fija

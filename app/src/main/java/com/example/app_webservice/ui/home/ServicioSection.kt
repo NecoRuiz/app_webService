@@ -12,13 +12,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.draw.shadow
+import androidx.navigation.NavHostController
+import com.example.app_webservice.ui.core.Screen
+import com.example.app_webservice.ui.reserva.ReservaViewModel
 import com.example.app_webservice.ui.theme.fredokaFmily
 
-@Preview
+
 @Composable
-fun ServicioSection() {
+fun ServicioSection(
+    viewModel: ReservaViewModel,
+    navController: NavHostController
+) {
     val servicios = listOf(
         "Limpieza de vivienda",
         "Limpieza de oficina",
@@ -59,7 +64,10 @@ fun ServicioSection() {
                     )
 
                     Button(
-                        onClick = { /* Acción de reservar */ },
+                        onClick = {
+                            viewModel.setServicioSeleccionado(servicio)
+                            navController.navigate(Screen.Reserva.route)
+                                  },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF00796B),
                             contentColor = Color.White
