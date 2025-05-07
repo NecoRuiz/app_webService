@@ -42,7 +42,8 @@ fun AppNavigation(loginViewModel: LoginViewModel) {
         }
 
         composable(Screen.Reserva.route) {
-            ReservaScreen(viewModel = reservaViewModel)
+            ReservaScreen(viewModel = reservaViewModel,
+                navController = navController)
         }
     }
 }
