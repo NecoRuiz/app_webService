@@ -3,9 +3,14 @@ package com.example.app_webservice.data.repository
 import com.example.app_webservice.data.api.JsonRpcRequest
 import com.example.app_webservice.data.api.JsonRpcResponse
 import com.example.app_webservice.data.api.OdooApi
+import com.example.app_webservice.session.SessionManager
 import com.google.gson.JsonElement
 
 class UserRepository(private val api: OdooApi) {
+
+    var loggedInUserId: Int? = null
+    var loggedInPassword: String? = null
+
 
     suspend fun getUserId(): Int?{
         val request = JsonRpcRequest(
@@ -64,8 +69,9 @@ class UserRepository(private val api: OdooApi) {
         }
     }
 
-    suspend fun authenticateUser(email: String, password: String): Int?{
 
+
+    suspend fun authenticateUser(email: String, password: String): Int? {
         val request = JsonRpcRequest(
             jsonrpc = "2.0",
             method = "call",
@@ -77,7 +83,13 @@ class UserRepository(private val api: OdooApi) {
             id = 1
         )
         val response = api.jsonrpc(request)
-        return response.asJsonObject["result"]?.asInt
+        val uid = response.asJsonObject["result"]?.asInt
+        if (uid != null) {
+            SessionManager.loggedInUserId = uid
+            SessionManager.loggedInPassword = password
+        }
+        return uid
     }
+
 }
 

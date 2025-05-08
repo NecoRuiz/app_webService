@@ -14,11 +14,16 @@ import com.example.app_webservice.ui.login.LoginScreen
 import com.example.app_webservice.ui.login.LoginViewModel
 import com.example.app_webservice.ui.reserva.ReservaScreen
 import com.example.app_webservice.ui.reserva.ReservaViewModel
+import com.example.app_webservice.ui.reunion.ReunionScreen
+import com.example.app_webservice.ui.reunion.ReunionViewModel
 
 @Composable
-fun AppNavigation(loginViewModel: LoginViewModel) {
+fun AppNavigation(
+    loginViewModel: LoginViewModel,
+    reservaViewModel: ReservaViewModel,
+    reunionViewModel: ReunionViewModel
+) {
     val navController = rememberNavController()
-    val reservaViewModel: ReservaViewModel = viewModel()
     val loginSuccess by loginViewModel.loginSuccess.observeAsState(false)
 
     NavHost(navController = navController, startDestination = Screen.Splash.route) {
@@ -38,15 +43,28 @@ fun AppNavigation(loginViewModel: LoginViewModel) {
         }
 
         composable(Screen.Home.route) {
-            HomeScreen(navController = navController, reservaViewModel = reservaViewModel)
+            HomeScreen(
+                navController = navController,
+                reservaViewModel = reservaViewModel
+            )
         }
 
         composable(Screen.Reserva.route) {
-            ReservaScreen(viewModel = reservaViewModel,
-                navController = navController)
+            ReservaScreen(
+                viewModel = reservaViewModel,
+                navController = navController
+            )
+        }
+
+        composable(Screen.Reunion.route) {
+            ReunionScreen(
+                viewModel = reunionViewModel,
+                navController = navController
+            )
         }
     }
 }
+
 
 
 

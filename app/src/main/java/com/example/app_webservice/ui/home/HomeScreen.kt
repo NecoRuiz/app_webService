@@ -135,11 +135,13 @@ fun HomeScreen(navController: NavHostController, reservaViewModel: ReservaViewMo
                     viewModel = reservaViewModel,
                     navController = navController
                 )
-                "reunion" -> ReunionSection()
+                "reunion" -> ReunionSection(
+                    navController = navController
+                )
                 "historial" -> HistorialSection()
             }
-
         }
+
 
         // Barra inferior fija
         Row(
