@@ -138,7 +138,9 @@ fun HomeScreen(navController: NavHostController, reservaViewModel: ReservaViewMo
                 "reunion" -> ReunionSection(
                     navController = navController
                 )
-                "historial" -> HistorialSection()
+                "historial" -> HistorialSection(
+                    navController = navController
+                )
             }
         }
 

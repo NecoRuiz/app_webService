@@ -77,6 +77,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.androidx.storage)
 
 
     // Tests

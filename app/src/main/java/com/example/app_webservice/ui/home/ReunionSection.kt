@@ -29,7 +29,7 @@ fun ReunionSection(navController: NavController) {
         Text("Reuniones", fontWeight = FontWeight.Bold, fontSize = 18.sp)
         Spacer(modifier = Modifier.height(8.dp))
         Button(
-            onClick = { navController.navigate(Screen.Reunion.route) },
+            onClick = { navController.navigate(Screen.Reuniones.route) },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00796B))
         ) {
             Text("Solicitar", color = Color.White)

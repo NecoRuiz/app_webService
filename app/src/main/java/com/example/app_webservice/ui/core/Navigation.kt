@@ -8,6 +8,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.app_webservice.ui.historial.HistorialReunionesScreen
+import com.example.app_webservice.ui.historial.HistorialServiciosScreen
 import com.example.app_webservice.ui.home.HomeScreen
 import com.example.app_webservice.ui.init.InitScreen
 import com.example.app_webservice.ui.login.LoginScreen
@@ -49,20 +51,35 @@ fun AppNavigation(
             )
         }
 
-        composable(Screen.Reserva.route) {
+        composable(Screen.Reservas.route) {
             ReservaScreen(
                 viewModel = reservaViewModel,
                 navController = navController
             )
         }
 
-        composable(Screen.Reunion.route) {
+        composable(Screen.Reuniones.route) {
             ReunionScreen(
                 viewModel = reunionViewModel,
                 navController = navController
             )
         }
+
+        composable(Screen.HistorialServicios.route) {
+            HistorialServiciosScreen(
+                navController = navController,
+                viewModel = reservaViewModel
+            )
+        }
+
+        composable(Screen.HistorialReuniones.route) {
+            HistorialReunionesScreen(
+                navController = navController,
+                viewModel = reunionViewModel
+            )
+        }
     }
+
 }
 
 

@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.app_webservice.data.model.Reserva
 import com.example.app_webservice.data.repository.ReservaRepository
 import kotlinx.coroutines.launch
 
@@ -13,6 +14,10 @@ class ReservaViewModel(private val repository: ReservaRepository) : ViewModel() 
 
     private val _reservaExitosa = mutableStateOf<Boolean?>(null)
     val reservaExitosa: State<Boolean?> = _reservaExitosa
+
+    private val _historialReservas = mutableStateOf<List<Reserva>>(emptyList())
+    val historialReservas: State<List<Reserva>> = _historialReservas
+
 
     val toastMessage = mutableStateOf("")
 
@@ -44,6 +49,17 @@ class ReservaViewModel(private val repository: ReservaRepository) : ViewModel() 
                 "✅ Reserva enviada con éxito"
             } else {
                 "❌ Error al enviar la reserva"
+            }
+        }
+    }
+
+    fun cargarHistorial() {
+        viewModelScope.launch {
+            val historial = repository.obtenerHistorialReservas()
+            if (historial != null) {
+                _historialReservas.value = historial
+            } else {
+                toastMessage.value = "❌ No se pudo cargar el historial"
             }
         }
     }

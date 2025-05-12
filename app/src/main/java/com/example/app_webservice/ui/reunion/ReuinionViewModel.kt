@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.app_webservice.data.model.Reunion
 import com.example.app_webservice.data.repository.ReunionRepository
 import kotlinx.coroutines.launch
 
@@ -11,6 +12,8 @@ class ReunionViewModel(private val repository: ReunionRepository) : ViewModel() 
 
     private val _solicitudExitosa = mutableStateOf<Boolean?>(null)
     val solicitudExitosa: State<Boolean?> = _solicitudExitosa
+
+    val historialReuniones = mutableStateOf<List<Reunion>>(emptyList())
 
     val toastMessage = mutableStateOf("")
 
@@ -30,6 +33,16 @@ class ReunionViewModel(private val repository: ReunionRepository) : ViewModel() 
         toastMessage.value = ""
     }
 
+    fun cargarHistorialReuniones() {
+        viewModelScope.launch {
+            val resultado = repository.obtenerHistorialReuniones()
+            if (resultado != null) {
+                historialReuniones.value = resultado
+            } else {
+                toastMessage.value = "❌ No se pudo cargar el historial de reuniones"
+            }
+        }
+    }
 }
 
 

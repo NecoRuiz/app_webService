@@ -66,7 +66,7 @@ fun ServicioSection(
                     Button(
                         onClick = {
                             viewModel.setServicioSeleccionado(servicio)
-                            navController.navigate(Screen.Reserva.route)
+                            navController.navigate(Screen.Reservas.route)
                                   },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF00796B),
