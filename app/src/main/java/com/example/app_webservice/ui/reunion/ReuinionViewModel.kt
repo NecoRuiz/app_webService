@@ -22,9 +22,9 @@ class ReunionViewModel(private val repository: ReunionRepository) : ViewModel() 
             val resultado = repository.crearSolicitudReunion(fecha, hora, motivo, estado)
 
             toastMessage.value = if (resultado != null) {
-                "✅ Solicitud enviada con éxito"
+                "Solicitud enviada con éxito"
             } else {
-                "❌ Error al solicitar la reunión"
+                "Error al solicitar la reunión"
             }
         }
     }
@@ -39,7 +39,7 @@ class ReunionViewModel(private val repository: ReunionRepository) : ViewModel() 
             if (resultado != null) {
                 historialReuniones.value = resultado
             } else {
-                toastMessage.value = "❌ No se pudo cargar el historial de reuniones"
+                toastMessage.value = "No se pudo cargar el historial de reuniones"
             }
         }
     }

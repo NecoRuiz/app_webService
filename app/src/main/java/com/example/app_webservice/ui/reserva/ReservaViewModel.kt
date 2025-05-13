@@ -48,7 +48,7 @@ class ReservaViewModel(private val repository: ReservaRepository) : ViewModel() 
             toastMessage.value = if (resultado != null) {
                 "✅ Reserva enviada con éxito"
             } else {
-                "❌ Error al enviar la reserva"
+                "Error al enviar la reserva"
             }
         }
     }
@@ -59,7 +59,7 @@ class ReservaViewModel(private val repository: ReservaRepository) : ViewModel() 
             if (historial != null) {
                 _historialReservas.value = historial
             } else {
-                toastMessage.value = "❌ No se pudo cargar el historial"
+                toastMessage.value = "No se pudo cargar el historial"
             }
         }
     }

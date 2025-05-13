@@ -5,7 +5,6 @@ import com.example.app_webservice.data.api.JsonRpcRequest
 import com.example.app_webservice.data.api.OdooApi
 import com.example.app_webservice.data.model.Reserva
 import com.example.app_webservice.session.SessionManager
-import com.example.app_webservice.session.SessionManager.loggedInUserId
 import com.google.gson.JsonElement
 
 
@@ -81,13 +80,15 @@ class ReservaRepository(private val api: OdooApi) {
                     "service" to "object",
                     "method" to "execute_kw",
                     "args" to listOf(
-                        "TotalShine",  // Nombre de la base de datos
-                        uid,
-                        password,  // ✅ Contraseña del usuario autenticado
-                        "reserva.servicio",
-                        "search_read",
+                        "TotalShine",           // Nombre de la base de datos
+                        uid,                    // ID del usuario
+                        password,               // Contraseña
+                        "reserva.servicio",     // Modelo
+                        "search_read",          // Método
                         listOf(
-                            listOf("usuario_id", "=", uid)
+                            listOf(
+                                listOf("usuario_id", "=", uid)
+                            )
                         ),
                         mapOf(
                             "fields" to listOf("tipo_servicio", "fecha", "horas", "ubicacion", "precio")
@@ -98,6 +99,8 @@ class ReservaRepository(private val api: OdooApi) {
             )
 
             val response = api.jsonrpc(request)
+            println("🟡 Respuesta JSON completa desde Odoo: $response")
+
             val result = response.asJsonObject["result"]?.asJsonArray ?: return emptyList()
 
             result.mapNotNull { item ->
@@ -112,10 +115,12 @@ class ReservaRepository(private val api: OdooApi) {
             }
 
         } catch (e: Exception) {
-            println("❌ Error al obtener historial: ${e.message}")
+            println("❌ Error al obtener historial de reservas: ${e.message}")
             null
         }
     }
+
+
 
 
 

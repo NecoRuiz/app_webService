@@ -428,10 +428,10 @@ fun BouncingBubbles() {
 
     // Lista de colores para las burbujas
     val bubbleColors = listOf(
-        Color(0xFFa8d5ba), // Verde pastel
-        Color(0xFFb2c9f7), // Azul pastel
-        Color(0xFFcce0e1), // Azul claro
-        Color(0xFFb0e0a8)  // Verde menta claro
+        Color(0xFFa8d5ba),
+        Color(0xFFb2c9f7),
+        Color(0xFFcce0e1),
+        Color(0xFFb0e0a8)
     )
 
     // Creamos una lista de burbujas
